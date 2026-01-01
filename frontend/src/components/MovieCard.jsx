@@ -3,7 +3,7 @@ import { useMovieContext } from "../contexts/MovieContext"
 
 function MovieCard({ movie }) {
   if (movie.mal_id === 52991) {
-    console.log("blocking mideren...")
+    //console.log("blocking mideren...")
     return null
   }
   //Calls the context function to retrieve context's data

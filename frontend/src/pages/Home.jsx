@@ -1,6 +1,10 @@
 import MovieCard from "../components/MovieCard";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { useState, useEffect } from "react";
 import { getPopularAnime, searchAnime } from "../services/api";
+
+import { useCallback } from "react";
+
 import "../css/Home.css";
 function Home({ }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,13 +20,36 @@ function Home({ }) {
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1)
+
+  /*
+    const loadMore = useCallback(() => {
+      console.log("Loading more animes...")
+      setPage(prev => prev+1);
+      console.log("page:", page);
+    }, []);
+  
+    const observerTarget = useInfiniteScroll(loadMore, loading);
+  */
+
+  const addAnimes = (newAnimes) => {
+    setAnimes(prev => {
+      const existingIds = (prev.map(a => a.mal_id));
+      const uniqueNew = newAnimes.filter(a => !existingIds.includes(a.mal_id));
+      return [...prev, ...uniqueNew];
+    });
+  };
 
   useEffect(() => {
-    //console.log("bruh");
+    console.log("loading changed to:", loading)
+  }, [loading])
+
+  useEffect(() => {
     const loadPopularAnime = async () => {
+      setLoading(true);
       try {
-        const popularAnime = await getPopularAnime();
-        setAnimes(popularAnime);
+        const popularAnime = await getPopularAnime(page);
+        addAnimes(popularAnime);
       } catch (err) {
         setError("Failed to load animes...");
         console.log(err);
@@ -31,18 +58,25 @@ function Home({ }) {
       }
     };
     loadPopularAnime();
-  }, []); //dependency array
+  }, [page]); //dependency array
+
 
   useEffect(() => {
     const handleScroll = () => {
+      //console.log(loading)
       const scrolledToBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
-      if (scrolledToBottom) {
-        console.log("reached bottom of list");
+      if (scrolledToBottom && loading === false) {
+        console.log("loading next page of shit")
+        setLoading(true)
+        setPage(prev => prev + 1)
+        //console.log("reached bottom of list");
+      } else {
+        //console.log(loading)
       }
     }
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll)
-  }, []);
+  }, [loading]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -63,6 +97,7 @@ function Home({ }) {
     //setSearchQuery("sybau") //can empty search or not
   };
 
+  //   <div ref={observerTarget} style={{height: "20px", background: "red"}}></div>
   return (
     <div className="Home">
       <form onSubmit={handleSearch} className="search-form">
@@ -79,15 +114,21 @@ function Home({ }) {
       </form>
 
       {error && <div className="error-message">(error)</div>}
-      {loading ? (
-        <div className="loading">Loading...</div> //if loading display loading 
-      ) : ( //else display grid
+
+      {loading && animes.length === 0 && <h1 className="loading" align="center" >Loading...</h1>}
+
+      {animes.length > 0 && (
         <div className="movies-grid">
           {animes.map((movie) => (
             <MovieCard movie={movie} key={movie.mal_id} />
           ))}
         </div>
       )}
+
+      {loading && animes.length > 0 && (
+        <h2 className="loading" align="center">Loading...</h2> //if loading display loading 
+      )}
+
     </div>
   );
 }

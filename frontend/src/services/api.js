@@ -1,9 +1,9 @@
 const API_KEY = "";
 const BASE_URL = "https://api.jikan.moe/v4";
 
-export const getPopularAnime = async () => {
+export const getPopularAnime = async (page) => {
     console.log("getting popularanime")
-    const response = await fetch(`${BASE_URL}/top/anime`); 
+    const response = await fetch(`${BASE_URL}/top/anime?page=${page}`); 
     const raw = await response.json();
     console.log(raw.data)
     return raw.data;
