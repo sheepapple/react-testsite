@@ -27,7 +27,7 @@ export const MovieProvider = ({children}) => { //children is a reserved prop
         if (isLoaded)
             localStorage.setItem("favorites", JSON.stringify(favorites))
         console.log("Saving to Favorites:")
-        console.log(JSON.stringify(favorites))
+        //console.log(JSON.stringify(favorites))
         
     }, [favorites])
 

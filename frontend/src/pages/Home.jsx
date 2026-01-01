@@ -2,7 +2,7 @@ import MovieCard from "../components/MovieCard";
 import { useState, useEffect } from "react";
 import { getPopularAnime, searchAnime } from "../services/api";
 import "../css/Home.css";
-function Home({}) {
+function Home({ }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [animes, setAnimes] = useState([]);
   /*
@@ -18,7 +18,7 @@ function Home({}) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("bruh");
+    //console.log("bruh");
     const loadPopularAnime = async () => {
       try {
         const popularAnime = await getPopularAnime();
@@ -33,22 +33,33 @@ function Home({}) {
     loadPopularAnime();
   }, []); //dependency array
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolledToBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+      if (scrolledToBottom) {
+        console.log("reached bottom of list");
+      }
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, []);
+
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (loading) return 
+    if (loading) return
     if (!searchQuery.trim()) return
     setLoading(true)
-    try{
-        const searchResults = await searchAnime(searchQuery);
-        setAnimes(searchResults)
-        setError(null)
+    try {
+      const searchResults = await searchAnime(searchQuery);
+      setAnimes(searchResults)
+      setError(null)
     } catch (error) {
-        setErorr("Failed to search movies...")
-        console.log(error);
+      setErorr("Failed to search movies...")
+      console.log(error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-    console.log("searching");
+    //console.log("searching");
     //setSearchQuery("sybau") //can empty search or not
   };
 
@@ -67,7 +78,7 @@ function Home({}) {
         </button>
       </form>
 
-        {error && <div className="error-message">(error)</div>}
+      {error && <div className="error-message">(error)</div>}
       {loading ? (
         <div className="loading">Loading...</div> //if loading display loading 
       ) : ( //else display grid
