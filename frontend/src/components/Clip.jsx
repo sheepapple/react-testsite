@@ -33,7 +33,6 @@ function Clip({ clip }) {
                 ref={videoRef}
                 src={clip.url}
                 loop
-                muted
                 playsInLine
             />
             <div className="clip-info">
