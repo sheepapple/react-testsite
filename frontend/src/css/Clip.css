@@ -1,14 +1,75 @@
 .clip {
     position: relative;
     width: 100%;
+    height: 100%;
     scroll-snap-align: start;
     scroll-snap-stop: always;
 }
 
 .clip-video {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
+}
+
+.clip-overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+}
+
+.clip-pause-btn {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    border-radius: 0;
+    z-index: 0;
+}
+
+.clip-actions {
+    position: absolute;
+    right: 0;
+    bottom: 15%;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    padding: 1rem;
+}
+
+.like-btn,
+.comment-btn,
+.share-btn {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(119, 43, 43, 0.0);
+    border: none;
+    cursor: pointer;
+    display: flex;      /* For centering emoji/icon */
+    flex-direction: column;
+    font-size: 16px;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.like-btn:focus,
+.comment-btn:focus,
+.share-btn:focus {
+    outline: none; /* Removes the default outline */
+    /* Add some other stuff here later idk*/
 }
 
 .clip-info {

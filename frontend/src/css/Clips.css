@@ -29,9 +29,10 @@
 }
 
 .clips-content {
-    height: 80vh;
-    width: 45vh;
-    background: red;
+    height: 100%;
+    width: 100%;
+
+    /*red background was sticking out on the right*/
     scroll-snap-align: start;
     scroll-snap-stop: always;
 }

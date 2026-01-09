@@ -1,9 +1,11 @@
 import "../css/Clip.css"
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 function Clip({ clip }) {
 
     const videoRef = useRef(null)
+    const [paused, setPaused] = useState(false);
+    const [liked, setLiked] = useState(false);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -27,21 +29,72 @@ function Clip({ clip }) {
         return () => observer.disconnect();
     }, [])
 
-    return (
-        <div className="clip">
-            <video className="clip-video"
-                ref={videoRef}
-                src={clip.url}
-                loop
-                playsInLine
-            />
-            <div className="clip-info">
-                <h3>{(clip.title) ? clip.title : "null"}</h3>
-                <p>{(clip.description) ? clip.description : "null"}</p>
-                <h4 className="clip-anime">{(clip.anime) ? clip.anime : "null"}</h4>
+    useEffect(() => {
+        if (!videoRef.current) return;
+        if (paused) {
+
+            videoRef.current?.pause();
+        } else { 
+            videoRef.current?.play();
+        }
+    }, [paused]);
+
+function onPause(e) {
+    e.preventDefault();
+    console.log("clicked!");
+    setPaused(prev => !prev);
+
+}
+
+function onActionClick(e) {
+    e.preventDefault();
+    const div = e.currentTarget;
+    console.log(div.className);
+    if (div.className === "like-btn") {
+        console.log("liked!");
+        (liked) ? setLiked(false) : setLiked(true);
+    }
+}
+
+return (
+    <div className="clip">
+        <div className="clip-overlay">
+            <button className="clip-pause-btn" onClick={onPause}>
+                {paused ?
+                    <img src="pauseBtnSVG.svg" alt="Pause button for clips" width="80%" height="80%" />
+                    : <img src="playBtnSVG.svg" alt="Play button for clips" width="80%" height="80%" />}
+            </button>
+            <div className="clip-actions">
+                <button className="like-btn" onClick={onActionClick}>
+                    {liked ? 
+                        <img src="heartBtnFillSVG.svg" alt="Liked button for clips" width="80%" height="80%" />
+                        : <img src="heartBtnSVG.svg" alt="Like button for clips" width="80%" height="80%"/>
+                        }
+                    <span className="action-count">72.7K</span>
+                </button>
+                <button className="comment-btn">
+                    <img src="commentBtnSVG.svg" alt="Comment button for clips" width="80%" height="80%" />
+                    <span className="action-count">6.7K</span>
+                </button>
+                <button className="share-btn">
+                    <img src="shareBtnSVG.svg" alt="Share button for clips" width="80%" height="80%" />
+                    <span className="action-count">2.1K</span>
+                </button>
             </div>
         </div>
-    );
+        <video className="clip-video"
+            ref={videoRef}
+            src={clip.url}
+            loop
+            playsInline
+        />
+        <div className="clip-info">
+            <h3>{(clip.title) ? clip.title : "null"}</h3>
+            <p>{(clip.description) ? clip.description : "null"}</p>
+            <h4 className="clip-anime">{(clip.anime) ? clip.anime : "null"}</h4>
+        </div>
+    </div>
+);
 }
 
 export default Clip;
