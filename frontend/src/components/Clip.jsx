@@ -90,20 +90,32 @@ function Clip({ clip }) {
                     </button>
                 </div>
             </div>
-            <video className="clip-video"
+            <iframe
                 ref={iframeRef}
-                src={clip.url}
-                loop
-                playsInline
+                className="clip-video"
+
+                src={`https://www.youtube.com/embed/${clip.youtubeId}?
+autoplay=1&mute=1&controls=0&loop=1&playlist=${clip.youtubeId}&modestbranding=1`}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
             />
+
             <div className="clip-info">
-                <h3>{(clip.title) ? clip.title : "null"}</h3>
-                <p>{(clip.description) ? clip.description : "null"}</p>
-                <h4 className="clip-anime">{(clip.anime) ? clip.anime : "null"}</h4>
+                <div>
+                    <h3>{(clip.title) ? clip.title : ""}</h3>
+                    <p>{(clip.description) ? clip.description?.substring(0, 100) : ""}</p>
+                </div>
+                <h4 className="clip-anime">{(clip.channelTitle) ? clip.channelTitle : ""}</h4>
             </div>
         </div>
     );
 }
 
+/*
+    ref={iframeRef}
+    src={clip.url}
+    loop
+    playsInline
+*/
 export default Clip;
 
