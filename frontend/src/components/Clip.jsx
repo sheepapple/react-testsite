@@ -3,55 +3,72 @@ import "../css/Clip.css";
 
 function Clip({ clip }) {
 
-    const iframeRef = useRef(null)
-
+    //const iframeRef = useRef(null)
     //const videoRef = useRef(null)
+    const playerRef = useRef(null);
+    const containerRef = useRef(null);
+
     const [paused, setPaused] = useState(false);
     const [liked, setLiked] = useState(false);
+    //const [isVisible, setIsVisible] = useState(false);
 
 
     useEffect(() => {
+        if (!window.YT || !window.YT.Player) return;
+
+        playerRef.current = new window.YT.Player(containerRef.current, {
+            videoId: clip.youtubeId,
+            playerVars: {
+                autoplay: 0,
+                mute: 1,
+                controls: 0,
+                loop: 1,
+                playlist: clip.youtubeId,
+                modestbranding: 1,
+                playsinline: 1
+            }
+        });
+
+        return () => {
+            playerRef.current?.destroy();
+        };
+    }, [clip.youtubeId]);
+
+    useEffect(() => {
+        if (!playerRef.current) return;
+
         const observer = new IntersectionObserver(
             ([entry]) => {
-                /*
-                if (!iframeRef.current) return () => observer.disconnect();
-
                 if (entry.isIntersecting) {
-                    iframeRef.current?.play()
+                    playerRef.current.playVideo();
                 } else {
-                    iframeRef.current.currentTime = 0;
-                    iframeRef.current?.pause()
-                }*/
-
-                //handled by iframe
+                    playerRef.current.pauseVideo();
+                }
             },
-            { threshold: 0.9 }
-        )
+            { threshold: 0.5 }
+        );
 
-        if (iframeRef.current) {
-            observer.observe(iframeRef.current);
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
         }
 
         return () => observer.disconnect();
-    }, [])
-
-    /*
-    useEffect(() => {
-        if (!iframeRef.current) return;
-        if (paused) {
-
-            iframeRef.current?.pause();
-        } else {
-            iframeRef.current?.play();
-        }
-    }, [paused]);
-    */
+    }, []);
 
     function onPause(e) {
         e.preventDefault();
-        console.log("clicked!");
-        setPaused(prev => !prev);
+        const player = playerRef.current;
+        if (!player) return;
 
+        const state = player.getPlayerState();
+        if (state === window.YT.PlayerState.PLAYING) {
+            player.pauseVideo();
+            setPaused(true);
+        } else {
+            player.playVideo();
+            setPaused(false);
+        }
+        console.log("clicked!");
     }
 
     function onActionClick(e) {
@@ -90,15 +107,8 @@ function Clip({ clip }) {
                     </button>
                 </div>
             </div>
-            <iframe
-                ref={iframeRef}
-                className="clip-video"
 
-                src={`https://www.youtube.com/embed/${clip.youtubeId}?
-autoplay=1&mute=1&controls=0&loop=1&playlist=${clip.youtubeId}&modestbranding=1`}
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-            />
+            <div ref={containerRef} className="clip-video" />
 
             <div className="clip-info">
                 <div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Clip from "../components/Clip.jsx";
 import "../css/Clips.css";
 import { searchYouTubeShorts } from "../services/youtubeAPI";
@@ -16,6 +16,7 @@ function Clips({ }) {
 
     const loadClips = async (pageToken = '') => {
         if (loading) return
+        console.log('Loading with token:', pageToken)
         setLoading(true)
 
         try {
