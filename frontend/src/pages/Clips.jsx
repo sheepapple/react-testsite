@@ -14,26 +14,26 @@ function Clips() {
     // ========================================================================
     // STATE
     // ========================================================================
-    
+
     // All videoIds we've fetched from the API (this grows as user scrolls)
     const [allVideoIds, setAllVideoIds] = useState([]);
-    
+
     // Which clip is currently active/visible (index in allVideoIds)
     const [activeClipIndex, setActiveClipIndex] = useState(0);
-    
+
     // Loading state - true while fetching from API
     const [loading, setLoading] = useState(true);
-    
+
     // YouTube API pagination token for next batch
     const [nextPageToken, setNextPageToken] = useState('');
-    
+
     // Track if we're currently fetching more (prevents duplicate API calls)
     const [isFetchingMore, setIsFetchingMore] = useState(false);
 
     // ========================================================================
     // REFS
     // ========================================================================
-    
+
     // Store refs to each Clip div so we can observe them
     const clipRefs = useRef([]);
 
@@ -59,18 +59,18 @@ function Clips() {
                     if (entry.isIntersecting) {
                         // Find which index this clip is
                         const index = clipRefs.current.indexOf(entry.target);
-                        
+
                         if (index !== -1 && index !== activeClipIndex) {
                             console.log(`Clip ${index} is now active`);
                             setActiveClipIndex(index);
-                            
+
                             // Check if we need to load more videoIds from API
                             checkAndLoadMore(index);
                         }
                     }
                 });
             },
-            { 
+            {
                 threshold: 0.5,  // Trigger when 50% visible
                 root: null       // Use viewport as root
             }
@@ -102,7 +102,7 @@ function Clips() {
                 'anime shorts',
                 '' // Empty string = first page
             );
-            
+
             console.log(`Loaded ${videos.length} initial videos`);
             setAllVideoIds(videos);
             setNextPageToken(newToken || '');
@@ -120,11 +120,11 @@ function Clips() {
     const checkAndLoadMore = async (currentIndex) => {
         // Calculate how close user is to the end of loaded videoIds
         const remainingClips = allVideoIds.length - currentIndex;
-        
+
         // If within threshold AND we have a next page token AND not already fetching
-        const shouldLoadMore = 
-            remainingClips <= LOAD_MORE_THRESHOLD && 
-            nextPageToken && 
+        const shouldLoadMore =
+            remainingClips <= LOAD_MORE_THRESHOLD &&
+            nextPageToken &&
             !isFetchingMore;
 
         if (shouldLoadMore) {
@@ -136,7 +136,7 @@ function Clips() {
                     'anime shorts',
                     nextPageToken
                 );
-                
+
                 console.log(`Loaded ${videos.length} more videos`);
                 // Append new videos to existing array
                 setAllVideoIds(prev => [...prev, ...videos]);
@@ -152,7 +152,7 @@ function Clips() {
     // ========================================================================
     // CALCULATE WHICH CLIPS TO RENDER
     // ========================================================================
-    
+
     // Only render from activeClipIndex to activeClipIndex + PRELOAD_COUNT
     // This keeps the DOM light and prevents all videos from loading at once
     const startIndex = activeClipIndex;
@@ -183,7 +183,7 @@ function Clips() {
                         {clipsToRender.map((clip, renderIndex) => {
                             // Calculate the actual index in allVideoIds array
                             const actualIndex = startIndex + renderIndex;
-                            
+
                             return (
                                 <div
                                     key={clip.id}
@@ -197,7 +197,7 @@ function Clips() {
                                 </div>
                             );
                         })}
-                        
+
                         {/* Show loading indicator when fetching more */}
                         {isFetchingMore && (
                             <div className="loading-more">

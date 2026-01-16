@@ -48,7 +48,7 @@ function Clip({ clip, isActive }) {
             },
             events: {
                 // Called when player is fully loaded and ready
-                onReady: () => {
+                onReady: (event) => {
                     console.log(`Player ready for: ${clip.youtubeId}`);
                     setPlayerReady(true);
                 }
@@ -70,7 +70,7 @@ function Clip({ clip, isActive }) {
         // Don't do anything until player is ready
         if (!playerRef.current || !playerReady) return;
 
-        // Parent (Clips.jsx) tells us we're active → Play (unless user manually paused)
+        // Parent (Clips.jsx) tells us we're active → Play
         if (isActive && !paused) {
             console.log(`Playing: ${clip.youtubeId}`);
             playerRef.current.playVideo();
@@ -79,27 +79,10 @@ function Clip({ clip, isActive }) {
         else if (!isActive) {
             console.log(`Pausing: ${clip.youtubeId}`);
             playerRef.current.pauseVideo();
+            // Reset paused state when clip becomes inactive
+            setPaused(false);
         }
-    }, [clip.youtubeId, isActive, paused, playerReady]);
-
-    // ========================================================================
-    // RESET MANUAL PAUSE when clip becomes inactive
-    // ========================================================================
-    useEffect(() => {
-        // When this clip is no longer active, reset the manual pause state
-        // This allows it to autoplay next time it becomes active
-        if (!isActive) {
-            console.log(`Resetting pause state for: ${clip.youtubeId}`);
-            // Use functional update to avoid needing paused in dependencies
-            setPaused(prevPaused => {
-                if (prevPaused) {
-                    console.log('Pause state reset');
-                    return false;
-                }
-                return prevPaused;
-            });
-        }
-    }, [isActive, clip.youtubeId]); // Include clip.youtubeId to satisfy ESLint
+    }, [isActive, paused, playerReady]);
 
     // ========================================================================
     // USER INTERACTION HANDLERS
