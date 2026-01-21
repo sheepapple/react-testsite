@@ -394,7 +394,7 @@
             "videoDuration": "short",
             "maxResults": 10,
             "pageToken": "",
-            "key": "AIzaSyBSGoM5wIEjvHoj7_juPTRnuwhG_2UQpmY"
+            "key": "<API_KEY>"
         },
         "method": "get",
         "url": "https://www.googleapis.com/youtube/v3/search",
