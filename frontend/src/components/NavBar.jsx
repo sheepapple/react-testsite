@@ -7,9 +7,9 @@ function NavBar() {
             <Link to="/">Movie App</Link>
         </div>
         <div className="navbar-links">
-            <Link to="/" className="nav-link">Home</Link>
-            <Link to="/favorites" className="nav-link">Favorites</Link>
-            <Link to="/clips" className="nav-link">Clips (experimental)</Link>
+            <Link to="/projects/Aniclips" className="nav-link">Home</Link>
+            <Link to="/projects/Aniclips/favorites" className="nav-link">Favorites</Link>
+            <Link to="/projects/Aniclips/clips" className="nav-link">Clips (experimental)</Link>
         </div>
     </nav>
 }
